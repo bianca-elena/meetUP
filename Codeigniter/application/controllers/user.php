@@ -38,7 +38,8 @@ class User extends CI_Controller {
 			$this->load->helper('url');
 			// Get user's data and print it
 			$user = $this->facebook->api('/me');
-			$data["user"] = $user["name"];
+			echo "Bine ai venit, ";
+			echo $user["name"];
 			
 			$cookie = array(
 			'name' => 'urweb',
@@ -46,25 +47,6 @@ class User extends CI_Controller {
 			'expire' => time() + 1800,
 			'path' => '/'
 			 );
-
-
-			try{
-	                $user_friends = $this->facebook->api('/me/friends');
-
-	            } catch(FacebookApiException $e) {
-
-	                error_log($e);
-	                $user_friends = NULL;
-	            }
-
-	        if (!is_null($user_friends)) {
-	          		
-	         	$data['list_friends'] = $user_friends;
-	       	} else {
-	           	echo "error";
-	       	}
-
-
 
 			$this->input->set_cookie($cookie);
 			$this->load->model('set');
@@ -79,10 +61,6 @@ class User extends CI_Controller {
 		}
 	}
 
-
-	function friends() {
-	
-	}
 }
 
 ?>
