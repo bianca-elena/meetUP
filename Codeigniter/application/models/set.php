@@ -8,14 +8,12 @@
 		$result = $this->db->get('users');
 		$var = $result->result_array();
 
-		if( empty($var)) {
+		if( is_null($var)) {
 
 			$data = array(
    			'id' => $id ,
    			'name' => $name
 			);
-
-			echo "da";
 
 		$this->db->insert('users', $data); 
 		}

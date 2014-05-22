@@ -2,36 +2,53 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <title>Home</title>
-    
+    <title>meetUP Home</title>
     <style>
-      html, body, #map-canvas {
+      body{
+        background-color:  #0099ff;
+      }
+
+      #wrapper {
+        width : auto;
+        height: 100%; 
+        margin: 0 auto;
+      }
+
+      #map-canvas {
+         float: right;
+         width : 1050px;
+         height: 100%;
+         border-radius: 20px;
+         border-color : #000066;
+         border-width: 2px;
+         border-style:inset;
+      }
+
+      #leftPanel {
+        float: left;
+        width: 250px;
         height: 100%;
-        margin: 0px;
-        padding: 0px
       }
 
-      body {
-      background-color: #B8D4FF;
+      #tabs{
+        float: left;
+        width: 50px;
+        height: 100%;
+        background-color: white;
       }
 
-      ul#menu li a:link,a:visited
-      {
-        width : 100px;
-        display:block;
-        border-radius : 7px;
-        color:#FFFFFF;
-        background-color:#6A91D4;
-        border-width: 2px;
-        border-color: #7EA1DE;
-        text-align:center;
-        padding:4px;
-        text-decoration:none;
-        text-transform:uppercase;
-        margin-bottom: 5px;
+      #tab {
+
       }
 
-      ul#menu li#logout{
+      #dynamic_content {
+        float: right;
+        width: 200px;
+        height: 100%;
+        background-color: white ;
+      }
+
+      #logout{
         width:100px;
         border-radius : 7px;
         color:#FFFFFF;
@@ -42,28 +59,9 @@
         padding:4px;
         text-decoration:none;
         text-transform:uppercase;
-        margin-bottom: 5px; 
-      }
-
-      #left {
-        float: left;
-        width: 180px;
-        margin: auto;
-      }
-
-      #left ul li {
-        list-style: none;
-      }
-
-      #map-canvas {
-         margin: auto;
-         max-width : 1450px;
-         max-height: 850px;
-         border-radius: 20px;
-         border-color : #000066 ;
-         border-width: 2px;
-         border-style:inset;
-
+        margin-top : 5px;
+        margin-right : 15px;
+        margin-left: 1240px;
       }
 
     </style>
@@ -86,14 +84,6 @@
           };
          
           map = new google.maps.Map(document.getElementById('map-canvas'),mapOptions);
-
-
-          google.maps.event.addDomListener(window, "resize", function() {
-            var center = map.getCenter();
-            google.maps.event.trigger(map, "resize");
-            map.setCenter(center); 
-          });
-
 
           if(navigator.geolocation) {
                      
@@ -163,31 +153,82 @@
             }
 
         google.maps.event.addDomListener(window, 'load', initialize);
-
     </script>
   </head>
 
-<body>
-  <div id="left">
-    <h2 style="font-size:16px; text-align:center;">Bine ai venit,</h2>
-    <h2 style="font-size:16px; margin-top: -15px; text-align:center;"> <?php echo $user ?></h2>
-    <ul id="menu">
-      <li><a id="logout" href="<?php echo site_url('user/logout');?>">Logout</a></li>
+<body onload="init()">
+    <div id = "wrapper">
+        <div id="leftPanel">
+            <div id="tabs">
+                <div id="tab" >
+                    <a id="feed" href="#" onclick="selectTab(this); return false;">Feed</a>
+                </div>
+                <div id="tab" >
+                    <a id="loc" href="#" onclick="selectTab(this); return false;">Locations</a>
+                </div>
+                <div id="tab" >
+                    <a id="friends" href="#" onclick="selectTab(this); return false;">Friends</a>
+                </div>
+                <div id="tab" >
+                    <a href="<?php echo site_url('user/logout');?>">Logout</a>
+                </div>
+            </div>
+            <div id="dynamic_content">
+                <div id="newfeed">
+                    <p  id="feed_content" >FEED AICI</p>
+                </div>
+                <div id="newlocations">
+                    <p  id="loc_content" style ="display: none;" >LOCATION AICI</p>
+                </div>
+                <div id="newfriends">
+                    <p  id="friends_content" style ="display: none;" >FRIENDLIST</p>
+                </div>
+            </div>
+        </div>
+        <div id="map-canvas"></div>
+    </div>
 
-      <?php foreach($results as $result){ ?>
-      <li><a href="<?php echo site_url('user/locations/'.$result['type']);?>" > <?php echo $result['type']; ?></a></li>
-      <?php } ?>
-    </ul>
-    <h2 style="font-size:16px; margin-top:10px; text-align:center;">Lista prieteni</h2>
-    <ul>
-      <?php
-      foreach ($list_friends['data'] as $friend) {
-        echo '<li>'.$friend['name'].'</li>';
-      }
-      ?>
-    </ul>
-  </div>
-    <div id="map-canvas"></div>
+  <script type="text/javascript">
+                var selectedTabColor = "#006887";   
+                var selectedTabBackgroundColor = "#0086d1";
+
+                var tabDefaultColor = " #00a0e9";
+                var tabDefaultBackgroundColor = null;
+
+                var selectedTab = null;
+
+                function init() {
+                    var defaultSelectedTab = document.getElementById("feed");
+                    selectTab(defaultSelectedTab);
+                }
+
+                function selectTab(tab) {
+                    
+                    if (selectedTab != tab) {
+                    
+                        var content = null;
+                        var selectedTabContent = null;
+                        
+                        if (selectedTab) {
+                            selectedTab.style.color = tabDefaultColor;
+                            selectedTab.style.backgroundColor = tabDefaultBackgroundColor;
+                            
+                            content = selectedTab.id + "_content";
+                            selectedTabContent = document.getElementById(content);
+                            selectedTabContent.style.display = "none";
+                        }
+                    
+                        selectedTab = tab;
+                        selectedTab.style.color = selectedTabColor;
+                        selectedTab.style.backgroundColor = selectedTabBackgroundColor;
+                        
+                        content = selectedTab.id + "_content";
+                        selectedTabContent = document.getElementById(content);
+                        selectedTabContent.style.display = "block";
+                    }
+                    
+                }
+        </script>
 </body>
 
 </html>
